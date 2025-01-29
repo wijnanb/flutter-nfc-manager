@@ -71,6 +71,7 @@ public class SwiftNfcManagerPlugin: NSObject, FlutterPlugin {
     case "Iso15693#extendedWriteSingleBlock": handleIso15693ExtendedWriteSingleBlock(call.arguments as! [String : Any?], result: result)
     case "Iso15693#extendedLockBlock": handleIso15693ExtendedLockBlock(call.arguments as! [String : Any?], result: result)
     case "Iso15693#extendedReadMultipleBlocks": handleIso15693ExtendedReadMultipleBlocks(call.arguments as! [String : Any?], result: result)
+    case "Iso15693#extendedWriteMultipleBlocks": handleIso15693ExtendedWriteMultipleBlocks(call.arguments as! [String : Any?], result: result)
     case "Iso15693#getSystemInfo": handleIso15693GetSystemInfo(call.arguments as! [String : Any?], result: result)
     case "Iso15693#customCommand": handleIso15693CustomCommand(call.arguments as! [String : Any?], result: result)
     case "Iso7816#sendCommand": handleIso7816SendCommand(call.arguments as! [String : Any?], result: result)
@@ -580,6 +581,23 @@ public class SwiftNfcManagerPlugin: NSObject, FlutterPlugin {
         }
       }
     }
+  }
+
+  @available(iOS 14.0, *)
+  private func handleIso15693ExtendedWriteMultipleBlocks(_ arguments: [String : Any?], result: @escaping FlutterResult) {
+      tagHandler(NFCISO15693Tag.self, arguments, result) { tag in
+          let requestFlags = getRequestFlags(arguments["requestFlags"] as! [String])
+          let blockRange = arguments["blockRange"] as! NSRange
+          let dataBlocks = (arguments["dataBlocks"] as! [FlutterStandardTypedData]).map { $0.data }
+
+          tag.extendedWriteMultipleBlocks(requestFlags: requestFlags, blockRange: blockRange, dataBlocks: dataBlocks) { error in
+              if let error = error {
+                  result(getFlutterError(error))
+              } else {
+                  result(nil)
+              }
+          }
+      }
   }
 
   @available(iOS 13.0, *)
