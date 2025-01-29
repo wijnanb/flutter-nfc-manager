@@ -587,10 +587,10 @@ public class SwiftNfcManagerPlugin: NSObject, FlutterPlugin {
   private func handleIso15693ExtendedWriteMultipleBlocks(_ arguments: [String : Any?], result: @escaping FlutterResult) {
       tagHandler(NFCISO15693Tag.self, arguments, result) { tag in
           let requestFlags = getRequestFlags(arguments["requestFlags"] as! [String])
-          let blockRange = arguments["blockRange"] as! NSRange
+          let blockNumber = arguments["blockNumber"] as! Int
+          let numberOfBlocks = arguments["numberOfBlocks"] as! Int
           let dataBlocks = (arguments["dataBlocks"] as! [FlutterStandardTypedData]).map { $0.data }
-
-          tag.extendedWriteMultipleBlocks(requestFlags: requestFlags, blockRange: blockRange, dataBlocks: dataBlocks) { error in
+          tag.extendedWriteMultipleBlocks(requestFlags: requestFlags, blockRange: NSMakeRange(blockNumber, numberOfBlocks), dataBlocks: dataBlocks) { error in
               if let error = error {
                   result(getFlutterError(error))
               } else {
