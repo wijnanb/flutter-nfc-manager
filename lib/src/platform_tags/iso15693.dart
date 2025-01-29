@@ -371,10 +371,11 @@ class Iso15693 {
   }) async {
     return channel.invokeMethod('Iso15693#extendedWriteMultipleBlocks', {
       'handle': _tag.handle,
-      'requestFlags':
-          requestFlags.map((e) => $Iso15693RequestFlagTable[e]).toList(),
-      'blockNumber': blockNumber,
-      'numberOfBlocks': numberOfBlocks,
+      'requestFlags': requestFlags.map((e) => $Iso15693RequestFlagTable[e]).toList(),
+      'blockRange': {
+        'location': blockNumber,
+        'length': numberOfBlocks
+      },
       'dataBlocks': dataBlocks,
     });
   }
